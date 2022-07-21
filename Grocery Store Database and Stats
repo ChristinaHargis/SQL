@@ -1,0 +1,29 @@
+CREATE TABLE clothes (id INTEGER PRIMARY KEY, name TEXT, aisle INTEGER, color TEXT, price NUMERIC);
+
+INSERT INTO clothes VALUES (1, "skirt", 3, "blue", 4.99);
+INSERT INTO clothes VALUES (2, "pants", 5, "denim", 19.99);
+INSERT INTO clothes VALUES (3, "skorts", 3, "khaki", 7.99);
+INSERT INTO clothes VALUES (4, "socks", 7, "black", 3.99);
+INSERT INTO clothes VALUES (5, "shoes", 10, "white", 20.00);
+INSERT INTO clothes VALUES (6, "belt", 1, "glitter", 5.99);
+INSERT INTO clothes VALUES (7, "pins", 2, "multicolored", .99);
+INSERT INTO clothes VALUES (8, "hat", 11, "straw", 10.99);
+INSERT INTO clothes VALUES (9, "underwear", 7, "white", 8.99);
+INSERT INTO clothes VALUES (10, "t shirt", 4, "green", 9.99);
+INSERT INTO clothes VALUES (11, "button down shirt", 4, "pink", 11.99);
+INSERT INTO clothes VALUES (12, "turtle neck", 4, "grey", 12.99);
+INSERT INTO clothes VALUES (13, "sweater", 12, "black", 16.99);
+INSERT INTO clothes VALUES (14, "jacket", 12, "blue", 30.99);
+INSERT INTO clothes VALUES (15, "flip flops", 10, "white", 3.99);
+
+--display the database ordered by ascending price.
+SELECT * FROM clothes ORDER BY price asc;
+
+--display the items that cost less than $10 in descending order.
+SELECT * FROM clothes WHERE price < 10 ORDER BY price desc;
+
+--how much would it cost to buy one of every item in the store?
+SELECT SUM(price) FROM clothes;
+
+--What is the average cost of all the items in the store?
+SELECT AVG(price) FROM clothes;
