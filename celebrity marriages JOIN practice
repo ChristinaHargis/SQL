@@ -68,4 +68,4 @@ SELECT a.name, b.name FROM marriages
     ON marriages.person1_id = a.id
     JOIN celebrities b
     ON marriages.person2_id = b.id
-    WHERE a.best_known_for = "actor" AND b.best_known_for = "actor"
+    WHERE a.best_known_for = "actor" AND b.best_known_for = "actor";
