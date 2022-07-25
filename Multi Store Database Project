@@ -1,4 +1,4 @@
-#In this SQL code, I'm querying a database in SQLite that's holding Sales and Customer data to answer questions about the data.
+#In this SQL code, I'm querying a database in SQLite Studio that's holding Sales and Customer data to answer questions about the data.
 
 
 --How many orders were placed in January?
