@@ -1,0 +1,45 @@
+#In this SQL code, I'm querying a database in SQLite that's holding Sales and Customer data to answer questions about the data.
+
+
+--How many orders were placed in January?
+
+SELECT COUNT(orderID) FROM BIT_DB.JanSales;
+
+
+--How many of those orders were for an iPhone?
+
+SELECT COUNT(orderID) FROM BIT_DB.JanSales
+  WHERE product= "iPhone";
+
+
+--Select the customer account numbers for all the orders that were placed in February.
+
+SELECT customers.acctnum FROM BIT_DB.FebSales sales
+  JOIN BIT_DB.customers customers
+  ON sales.orderid = customers.order_id;
+
+
+--Which product was the cheapest one sold in January, and what was the price?
+
+SELECT BIT_DB.JanSales.Product, MIN(BIT_DB.JanSales.price) AS Price FROM BIT_DB.JanSales;
+
+
+--What is the total revenue for each product sold in January? 
+
+SELECT BIT_DB.JanSales.Product, SUM(BIT_DB.JanSales.Quantity)*price AS Revenue FROM BIT_DB.JanSales
+  GROUP BY BIT_DB.JanSales.Product
+  ORDER BY BIT_DB.JanSales.price asc;
+
+
+--Which products were sold in February at 548 Lincoln St, Seattle, WA 98101, how many of each were sold, and what was the total revenue?
+
+SELECT BIT_DB.FebSales.Product, BIT_DB.FebSales.location, BIT_DB.FebSales.Quantity, SUM(BIT_DB.FebSales.Quantity)*price AS Total_Revenue FROM BIT_DB.FebSales
+  WHERE location= "548 Lincoln St, Seattle, WA 98101";
+
+
+--How many customers ordered more than 2 products at a time in February, and what was the average amount spent for those customers?
+
+SELECT COUNT(customers.acctnum), AVG(sales.Quantity * price) AS Avg_Spent_per_customer FROM BIT_DB.FebSales sales
+  LEFT JOIN BIT_DB.customers customers
+  ON sales.orderID = customers.order_id
+  WHERE sales.Quantity > 2;
