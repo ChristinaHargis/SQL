@@ -1,0 +1,88 @@
+The following SQL code was written by me to solve the mystery on https://mystery.knightlab.com/
+
+
+--First, find the relevant crime scene report for a murder taking place on Jan 15, 2018 in SQL City 
+
+SELECT * FROM crime_scene_report
+WHERE date = 20180115 AND city = "SQL City" AND type = "murder";
+
+--Find the two witnesses.
+
+SELECT * FROM person
+	WHERE name LIKE "Annabel %" AND address_street_name = "Franklin Ave"
+  
+SELECT * FROM person
+	WHERE address_street_name = "Northwestern Dr"
+	ORDER by address_number desc LIMIT 1;
+  
+
+--Interview the two witnesses.
+
+SELECT person.name, interview.transcript FROM person
+JOIN interview
+ON person.id = interview.person_id
+WHERE person.name = "Annabel Miller" OR person.name = "Morty Schapiro"
+
+
+--Narrow down the possible suspects based on gym check in date, membership status, and membership id clues. 
+
+SELECT get_fit_now_member.name,
+get_fit_now_member.membership_status, 
+get_fit_now_check_in.membership_id, 
+get_fit_now_check_in.check_in_date FROM get_fit_now_check_in
+JOIN get_fit_now_member
+ON get_fit_now_check_in.membership_id = get_fit_now_member.id
+WHERE check_in_date = 20180109 AND membership_status = "gold"
+AND membership_id LIKE "48Z%"
+
+
+--Now, find out which of the two men we found has the license plate mentioned in the witness interview.
+
+SELECT person.name, drivers_license.plate_number 
+FROM drivers_license
+JOIN person
+ON drivers_license.id = person.license_id
+WHERE plate_number LIKE "%H42W%" 
+AND name = "Jeremy Bowers" OR name = "Joe Germuska"
+
+
+-- Now that we know the killer, interview him. 
+
+SELECT person.name, interview.transcript FROM person
+JOIN interview
+ON person.id = interview.person_id
+WHERE name = "Jeremy Bowers"
+
+
+--He says he was hired by someone and gives a description. Use the description to narrow down her name. 
+
+SELECT person.id, 
+person.name, drivers_license.height, 
+drivers_license.hair_color, 
+drivers_license.gender, 
+drivers_license.car_make, 
+drivers_license.car_model FROM drivers_license 
+JOIN person
+ON drivers_license.id = person.license_id
+WHERE height BETWEEN 65 AND 67 
+AND hair_color = "red" 
+AND car_make = "Tesla" 
+AND car_model = "Model S"
+
+
+-- Now find which of those women attended the SQL Symphony Concert 3 times in December 2017.
+
+SELECT facebook_event_checkin.person_id, 
+facebook_event_checkin.event_name, 
+facebook_event_checkin.date, 
+person.name FROM facebook_event_checkin
+JOIN person
+ON facebook_event_checkin.person_id = person.id
+WHERE name = "Red Korb" OR name = "Regina George" 
+OR name = "Miranda Priestly" AND event_name = "SQL Symphony Concert"
+AND date LIKE "201712%"
+
+
+
+
+
