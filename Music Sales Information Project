@@ -1,0 +1,171 @@
+--For this project, I worked with a database containing 11 tables of information about songs, customers, invoices, employees, sales, 
+  and other related information. The following is code that I wrote in SQLite to gather data from the tables.
+  
+  
+
+--Show Customers (their full names, customer ID, and country) who are not in the US. 
+
+SELECT customers.FirstName, 
+customers.LastName, 
+customers.CustomerId, 
+customers.Country FROM customers
+  WHERE Country != "USA";
+
+
+
+--Show only the Customers from Brazil.
+
+SELECT customers.FirstName, 
+customers.LastName, 
+customers.Country FROM customers
+  WHERE Country = "Brazil";
+
+
+
+--Find the Invoices of customers who are from Brazil. The resulting table should show the customer's full name, 
+  Invoice ID, Date of the invoice, and billing country.
+
+SELECT customers.FirstName, 
+customers.LastName, 
+customers.Country, 
+invoices.InvoiceId, 
+invoices.InvoiceDate, 
+invoices.BillingCountry FROM customers
+  LEFT JOIN invoices
+  ON customers.CustomerId = invoices.CustomerId
+  WHERE BillingCountry = "Brazil"
+  ORDER BY customers.LastName;
+
+
+
+--Show the Employees who are Sales Agents.
+
+SELECT employees.LastName, 
+employees.FirstName, 
+employees.Title FROM employees
+  WHERE Title LIKE ("Sales%Agent");
+
+
+
+--Find a unique/distinct list of billing countries from the Invoice table.
+
+SELECT DISTINCT invoices.BillingCountry FROM invoices;
+
+
+
+--Provide a query that shows the invoices associated with each sales agent. The resulting table should include the Sales Agent's full name.
+
+SELECT employees.LastName, 
+employees.FirstName, 
+employees.Title, 
+invoices.InvoiceId FROM employees
+  LEFT JOIN customers
+  ON employees.EmployeeId = customers.SupportRepId
+  LEFT JOIN invoices
+  ON customers.CustomerId = invoices.CustomerId
+  WHERE Title = "Sales Support Agent";
+  
+  
+
+--Show the Invoice Total, Customer name, Country, and Sales Agent name for all invoices and customers.
+
+SELECT employees.LastName AS Employee_Last_Name, 
+employees.FirstName AS Employee_First_Name, 
+employees.Title AS Employee_Title,
+invoices.InvoiceId, 
+invoices.Total AS Invoice_Total, 
+customers.LastName AS Customer_Last_Name, 
+customers.FirstName AS Customer_First_Name, 
+customers.Country AS Customer_Country
+FROM invoices
+  LEFT JOIN customers
+  ON invoices.CustomerId = customers.CustomerId
+  LEFT JOIN employees
+  ON customers.SupportRepId = employees.EmployeeId
+  ORDER BY Employee_Last_Name;
+  
+  
+
+--How many Invoices were there in 2009?
+
+SELECT COUNT(invoices.InvoiceDate) FROM invoices
+  WHERE InvoiceDate LIKE "2009%";
+
+
+
+--What are the total sales for 2009?
+
+SELECT SUM(invoice_items.UnitPrice*invoice_items.Quantity) AS Total_Sales_in_2009 FROM invoices
+  LEFT JOIN invoice_items
+  ON invoices.InvoiceId = invoice_items.InvoiceId
+  WHERE invoices.InvoiceDate LIKE "2009%";
+
+
+
+--Write a query that includes the purchased track name with each invoice line item.
+
+SELECT tracks.Name AS Track_Name, 
+invoice_items.InvoiceLineId FROM tracks
+  JOIN invoice_items
+  ON tracks.TrackId = invoice_items.TrackId
+  ORDER BY InvoiceLineId;
+
+
+
+--Write a query that includes the purchased track name AND artist name with each invoice line item.
+
+SELECT artists.Name AS Artist, 
+tracks.Name AS Track_Name, 
+invoice_items.InvoiceLineId FROM tracks
+  JOIN invoice_items
+  ON tracks.TrackId = invoice_items.TrackId
+  JOIN artists
+  ON tracks.Composer = artists.Name
+  ORDER BY Artist;
+
+
+
+--Provide a query that shows all the Tracks, and include the Album name, Media type, and Genre.
+
+SELECT tracks.name AS Track_Name, 
+albums.Title AS Album_Title, 
+genres.Name AS Genre, 
+media_types.Name AS Media_Type FROM tracks
+  LEFT JOIN media_types
+  ON tracks.MediaTypeId = media_types.MediaTypeId
+  LEFT JOIN albums
+  ON tracks.AlbumId = albums.AlbumId
+  LEFT JOIN genres
+  ON tracks.GenreId = genres.GenreId;
+
+
+
+--Show the total sales made by each sales agent.
+
+SELECT employees.LastName AS Sales_Agent_LastName, 
+employees.FirstName AS Sales_Agent_FirstName, 
+SUM(invoice_items.Quantity) AS total_sales FROM employees
+  JOIN customers
+  ON employees.EmployeeId = customers.SupportRepId
+  JOIN invoices
+  ON customers.CustomerId = invoices.CustomerId
+  JOIN invoice_items
+  ON invoices.InvoiceId = invoice_items.InvoiceId
+  GROUP BY employees.LastName;
+
+
+
+--Which sales agent made the most in sales in 2009?
+
+SELECT employees.LastName AS Sales_Agent_LastName, 
+employees.FirstName AS Sales_Agent_FirstName, 
+SUM(invoice_items.Quantity) AS total_sales FROM employees
+  JOIN customers
+  ON employees.EmployeeId = customers.SupportRepId
+  JOIN invoices
+  ON customers.CustomerId = invoices.CustomerId
+  JOIN invoice_items
+  ON invoices.InvoiceId = invoice_items.InvoiceId
+  WHERE invoices.InvoiceDate LIKE "2009%"
+  GROUP BY Sales_Agent_LastName
+  ORDER BY total_sales desc LIMIT 1;
