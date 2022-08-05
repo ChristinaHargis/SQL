@@ -1,6 +1,7 @@
-In this exercise, I was querying a bigquery_public_data set called london_bicycles. 
+In this exercise, I was querying multiple data sets in bigquery_public_data 
 
 
+This first set was called london_bicycles. 
 
 
 /* What are the names of the stations that bike_id 1710 started from? */
@@ -31,3 +32,33 @@ GROUP BY end_station_name;
 
 SELECT COUNT (DISTINCT bike_id) FROM bigquery-public-data.london_bicycles.cycle_hire
 WHERE duration > 2400;
+
+
+__________________________________________________________________________________________________________________
+*******************************************************************************************************************
+__________________________________________________________________________________________________________________
+
+
+This next set that I was querying, I uploaded from information obtained from the Social Security Administration. 
+Information on baby names in 2014. The data included gender, name, and the amount of babies assigned each name.
+
+/*  what are the three most popular baby names for boys in 2014?  */
+
+SELECT name AS three_most_popular FROM babynames2014-358506.babynames.names_2014
+WHERE gender = "M"
+ORDER BY count desc LIMIT 3;
+
+/*  how many girls in total are on the list? */
+
+SELECT SUM(count) AS number_of_girls FROM babynames2014-358506.babynames.names_2014
+WHERE gender = "F";
+
+/* what were the ten least popular names in 2014, and to what genders were they assigned? */
+
+SELECT name AS least_popular, gender FROM babynames2014-358506.babynames.names_2014
+ORDER BY count asc LIMIT 10;
+
+/* how many girl names start with the letter Q? */
+
+SELECT COUNT(name) FROM babynames2014-358506.babynames.names_2014
+WHERE gender ="F" AND name LIKE "Q%";
